@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Remindly — Smart Task Reminders</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" class="screen active">
+  <div class="login-bg">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+  </div>
+  <div class="login-card">
+    <div class="logo">
+      <span class="logo-icon">⏰</span>
+      <span class="logo-text">Remindly</span>
+    </div>
+    <h1>Never miss<br/><em>a thing.</em></h1>
+    <p class="subtitle">Connect your Google Calendar and turn tasks into scheduled events — automatically.</p>
+    <button class="google-btn" onclick="loginWithGoogle()">
+      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20H24v8h11.3C33.5 33.1 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.7-8 19.7-20 0-1.3-.1-2.7-.1-4z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 16.1 19 13 24 13c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.5-5.1l-6.2-5.2C29.4 35.5 26.8 36 24 36c-5.1 0-9.5-2.9-11.3-7.1L6 33.8C9.4 39.7 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20H24v8h11.3c-.9 2.5-2.6 4.6-4.8 6l6.2 5.2C40.4 35.9 44 30.4 44 24c0-1.3-.1-2.7-.4-4z"/></svg>
+      Sign in with Google
+    </button>
+    <p class="login-note">Your tasks sync directly to Google Calendar.</p>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app-screen" class="screen">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span>⏰</span> Remindly
+    </div>
+    <nav>
+      <a href="#" class="nav-item active" onclick="showTab('dashboard', this)">
+        <span>📊</span> Dashboard
+      </a>
+      <a href="#" class="nav-item" onclick="showTab('add', this)">
+        <span>➕</span> Add Reminder
+      </a>
+      <a href="#" class="nav-item" onclick="showTab('upcoming', this)">
+        <span>📅</span> Upcoming
+      </a>
+    </nav>
+    <div class="sidebar-user" id="sidebar-user">
+      <img id="user-avatar" src="" alt="avatar"/>
+      <div>
+        <div id="user-name" class="user-name">Loading...</div>
+        <div class="user-email" id="user-email"></div>
+      </div>
+      <button class="logout-btn" onclick="logout()" title="Logout">↩</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- DASHBOARD TAB -->
+    <section id="tab-dashboard" class="tab active">
+      <div class="page-header">
+        <h2>Good morning! 👋</h2>
+        <p>Here's what's coming up for you.</p>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-today">0</div>
+          <div class="stat-label">Today</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-week">0</div>
+          <div class="stat-label">This Week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-total">0</div>
+          <div class="stat-label">Total Reminders</div>
+        </div>
+      </div>
+      <div class="section-title">Upcoming Reminders</div>
+      <div id="dashboard-list" class="reminder-list">
+        <div class="empty-state">No reminders yet. Add your first one!</div>
+      </div>
+    </section>
+
+    <!-- ADD REMINDER TAB -->
+    <section id="tab-add" class="tab">
+      <div class="page-header">
+        <h2>New Reminder ➕</h2>
+        <p>Fill in the details and it'll appear in your Google Calendar.</p>
+      </div>
+      <div class="form-card">
+        <div class="form-group">
+          <label>Task Title *</label>
+          <input type="text" id="task-title" placeholder="e.g. Team standup, Doctor appointment..."/>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="task-desc" rows="3" placeholder="Any extra notes..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date *</label>
+            <input type="date" id="task-date"/>
+          </div>
+          <div class="form-group">
+            <label>Time *</label>
+            <input type="time" id="task-time"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Duration (minutes)</label>
+            <input type="number" id="task-duration" value="60" min="5" max="480"/>
+          </div>
+          <div class="form-group">
+            <label>Reminder Before</label>
+            <select id="task-reminder">
+              <option value="5">5 minutes</option>
+              <option value="10">10 minutes</option>
+              <option value="15" selected>15 minutes</option>
+              <option value="30">30 minutes</option>
+              <option value="60">1 hour</option>
+              <option value="1440">1 day</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Color Label</label>
+          <div class="color-row">
+            <span class="color-dot" style="background:#4285f4" data-val="1" onclick="selectColor(this)"></span>
+            <span class="color-dot" style="background:#0f9d58" data-val="2" onclick="selectColor(this)"></span>
+            <span class="color-dot" style="background:#db4437" data-val="3" onclick="selectColor(this)"></span>
+            <span class="color-dot" style="background:#f4b400" data-val="5" onclick="selectColor(this)"></span>
+            <span class="color-dot" style="background:#ab47bc" data-val="6" onclick="selectColor(this)"></span>
+            <span class="color-dot selected" style="background:#00acc1" data-val="7" onclick="selectColor(this)"></span>
+          </div>
+        </div>
+
+        <!-- Google Meet Toggle -->
+        <div class="meet-toggle-box">
+          <div class="meet-left">
+            <div class="meet-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M15 10l4.553-2.277A1 1 0 0121 8.723v6.554a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" stroke="#00bcd4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <div class="meet-title">Add Google Meet</div>
+              <div class="meet-sub">Automatic video call link banao</div>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="meet-toggle" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <!-- Meet Link Preview -->
+        <div id="meet-preview" class="meet-preview" style="display:none;">
+          <span>🎥</span>
+          <span>Event save hone ke baad Meet link generate hoga!</span>
+        </div>
+
+        <button class="submit-btn" onclick="submitReminder()">
+          <span id="submit-label">📅 Add to Google Calendar</span>
+        </button>
+        <div id="form-msg" class="form-msg"></div>
+      </div>
+    </section>
+
+    <!-- UPCOMING TAB -->
+    <section id="tab-upcoming" class="tab">
+      <div class="page-header">
+        <h2>Upcoming Reminders 📅</h2>
+        <p>All your scheduled tasks from Google Calendar.</p>
+      </div>
+      <div class="toolbar">
+        <input type="text" id="search-box" placeholder="🔍 Search reminders..." oninput="filterReminders()"/>
+        <button class="refresh-btn" onclick="loadReminders()">↻ Refresh</button>
+      </div>
+      <div id="upcoming-list" class="reminder-list">
+        <div class="loading-state">Loading your reminders...</div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
